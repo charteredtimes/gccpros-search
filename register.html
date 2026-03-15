@@ -93,7 +93,7 @@
         <input type="tel" id="f-wa" placeholder="+91 98765 43210">
       </div>
       <div class="field">
-        <label>LinkedIn profile link</label>
+        <label>LinkedIn profile link <span class="req">*</span></label>
         <input type="url" id="f-li" placeholder="https://linkedin.com/in/yourprofile">
       </div>
 
@@ -219,6 +219,7 @@ async function submitForm() {
   if (!exp)     { showErr('Please select your years of experience.'); return; }
   if (!domain)  { showErr('Please select your domain expertise.'); return; }
   if (!exp2)    { showErr('Please share your GCC experience and eligibility.'); return; }
+  if (!li)      { showErr('Please enter your LinkedIn profile link.'); return; }
   if (!consent) { showErr('Please select your WhatsApp consent preference.'); return; }
 
   const btn = document.getElementById('submit-btn');
