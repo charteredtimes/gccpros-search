@@ -187,7 +187,7 @@
 <footer>GCCPROs · Maharashtra · Founded by Shammi Prabhakar Singh</footer>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfbyP7bNDQ1Db4qInbLsjsBjSPXDy8myB07XFDm3qcHh-TVngCeGVlyCYUDeYTbwp5/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxH69RKpZ3bVp_l9iIrT4Yul5IFS4x6O6gndTKMmwGGFqTRzr2y_vYYuHo4FFttWWTe/exec';
 
 /* ── PASSWORD GENERATOR ─────────────────────────────────────── */
 function genPwd() {
@@ -336,12 +336,37 @@ async function submitForm() {
   };
 
   try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+    // Use a hidden form POST — bypasses CORS entirely, works with Apps Script
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = SCRIPT_URL;
+    form.target = 'hidden-iframe';
+    form.style.display = 'none';
+
+    // Apps Script reads e.parameter when sent as form data
+    Object.keys(payload).forEach(key => {
+      const input = document.createElement('input');
+      input.type  = 'hidden';
+      input.name  = key;
+      input.value = payload[key];
+      form.appendChild(input);
     });
-  } catch(e) { /* no-cors always throws — expected */ }
+
+    // Hidden iframe so page doesn't redirect
+    let iframe = document.getElementById('hidden-iframe');
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.name = 'hidden-iframe';
+      iframe.id   = 'hidden-iframe';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+
+  } catch(e) { console.log('Submit note:', e); }
 
   document.getElementById('final-pwd').textContent = password;
   document.getElementById('form-section').style.display = 'none';
