@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCCPROs — Join the Insider Network</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f4f3f0; min-height: 100vh; }
+  .top-bar { background: #0F2044; padding: 14px 28px; }
+  .logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: #fff; }
+  .logo-sub { font-size: 11px; color: #5DCAA5; letter-spacing: 1px; text-transform: uppercase; }
+  .hero { background: #0F2044; padding: 28px 24px 48px; }
+  .wa-bar { background: #0d5c3a; padding: 10px 24px; }
+  .wa-bar p { font-size: 12px; color: #9FE1CB; }
+  .wa-bar strong { color: #fff; }
+  .hero-tag { font-size: 11px; color: #5DCAA5; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 24px; color: #fff; line-height: 1.25; margin-bottom: 8px; }
+  .hero p { font-size: 12px; color: #9FE1CB; line-height: 1.6; max-width: 400px; }
+  .form-wrap { display: flex; justify-content: center; padding: 0 16px 48px; margin-top: -24px; }
+  .form-card { background: #fff; border-radius: 14px; width: 100%; max-width: 520px; border: 1px solid #E8E6E0; overflow: hidden; }
+  .form-body { padding: 28px 28px 32px; }
+  .section-label { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: #888780; border-bottom: 1px solid #E8E6E0; padding-bottom: 6px; margin: 0 0 18px; }
+  .section-gap { margin-top: 28px; }
+  .field { margin-bottom: 16px; }
+  label { display: block; font-size: 12px; font-weight: 500; color: #444441; margin-bottom: 5px; }
+  .req { color: #D85A30; }
+  input[type=text], input[type=email], input[type=tel], input[type=url], select, textarea {
+    width: 100%; border: 1px solid #D3D1C7; border-radius: 8px; padding: 10px 14px;
+    font-size: 13px; font-family: 'DM Sans', sans-serif; color: #1a2340; outline: none;
+    transition: border 0.15s; background: #fff; }
+  input:focus, select:focus, textarea:focus { border-color: #0F6E56; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888780' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  .radio-row { display: flex; gap: 20px; }
+  .radio-opt { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+  .radio-opt input { accent-color: #0F6E56; width: 15px; height: 15px; }
+  .radio-opt span { font-size: 13px; color: #444441; }
+  .pwd-box { background: #f4f3f0; border: 1px solid #D3D1C7; border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+  .pwd-val { font-family: monospace; font-size: 16px; font-weight: 500; color: #0F6E56; letter-spacing: 2px; }
+  .pwd-regen { font-size: 12px; color: #185FA5; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 0; }
+  .pwd-note { font-size: 11px; color: #888780; margin-top: 6px; }
+  .consent-box { background: #E1F5EE; border: 1px solid #9FE1CB; border-radius: 8px; padding: 14px 16px; margin-bottom: 18px; }
+  .consent-box .consent-label { font-size: 13px; color: #085041; font-weight: 500; margin-bottom: 10px; }
+  .btn { width: 100%; background: #0F2044; color: #fff; border: none; border-radius: 8px; padding: 14px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.15s; margin-top: 8px; }
+  .btn:hover { background: #1D3A5F; }
+  .btn:disabled { background: #B4B2A9; cursor: not-allowed; }
+  .err { background: #FCEBEB; border: 1px solid #F09595; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #791F1F; margin-bottom: 16px; display: none; }
+  /* SUCCESS SCREEN */
+  #success { display: none; padding: 48px 28px; text-align: center; }
+  .success-icon { width: 60px; height: 60px; background: #E1F5EE; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+  .success-icon svg { width: 28px; height: 28px; }
+  #success h2 { font-family: 'DM Serif Display', serif; font-size: 24px; color: #0F2044; margin-bottom: 10px; }
+  #success p { font-size: 13px; color: #5F5E5A; line-height: 1.6; margin-bottom: 20px; }
+  .pwd-reveal { background: #EAF3DE; border: 1px solid #C0DD97; border-radius: 10px; padding: 16px 20px; display: inline-block; text-align: left; }
+  .pwd-reveal-label { font-size: 11px; color: #3B6D11; margin-bottom: 4px; }
+  .pwd-reveal-val { font-family: monospace; font-size: 22px; font-weight: 500; color: #27500A; letter-spacing: 3px; }
+  footer { text-align: center; font-size: 11px; color: #B4B2A9; padding: 20px; }
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="logo">GCCPROs</div>
+  <div class="logo-sub">Maharashtra GCC Community</div>
+</div>
+<div class="wa-bar">
+  <p>Save <strong>+91-85069-76700</strong> in your phonebook before submitting — to receive our weekly GCC insights on WhatsApp.</p>
+</div>
+<div class="hero">
+  <div class="hero-tag">Insider Group Application</div>
+  <h1>Join the GCC Professionals<br>Insider Network</h1>
+  <p>We are obsessed with quality over quantity. All information is 100% confidential with no commercial use.</p>
+</div>
+
+<div class="form-wrap">
+  <div class="form-card">
+    <div class="form-body" id="form-section">
+      <div class="err" id="err"></div>
+
+      <p class="section-label">Personal details</p>
+
+      <div class="field">
+        <label>Full name <span class="req">*</span></label>
+        <input type="text" id="f-name" placeholder="e.g. Shammi Prabhakar Singh">
+      </div>
+      <div class="field">
+        <label>Email address <span class="req">*</span></label>
+        <input type="email" id="f-email" placeholder="you@company.com">
+      </div>
+      <div class="field">
+        <label>WhatsApp number <span class="req">*</span></label>
+        <input type="tel" id="f-wa" placeholder="+91 98765 43210">
+      </div>
+      <div class="field">
+        <label>LinkedIn profile link</label>
+        <input type="url" id="f-li" placeholder="https://linkedin.com/in/yourprofile">
+      </div>
+
+      <div class="section-gap">
+        <p class="section-label">GCC background</p>
+      </div>
+
+      <div class="field">
+        <label>Name of GCCs you have worked with <span class="req">*</span></label>
+        <textarea id="f-gccs" placeholder="e.g. NielsenIQ, Bajaj Finserv, KPIT Technologies..."></textarea>
+      </div>
+      <div class="field">
+        <label>Current city <span class="req">*</span></label>
+        <input type="text" id="f-city" placeholder="e.g. Pune">
+      </div>
+      <div class="field">
+        <label>Years of experience in GCCs <span class="req">*</span></label>
+        <select id="f-exp">
+          <option value="">Select range</option>
+          <option>Less than 2 years</option>
+          <option>2–5 years</option>
+          <option>5–10 years</option>
+          <option>10–15 years</option>
+          <option>15+ years</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Domain expertise <span class="req">*</span></label>
+        <select id="f-domain">
+          <option value="">Select your domain</option>
+          <option>Analytics &amp; Data Science</option>
+          <option>Technology &amp; Engineering</option>
+          <option>Finance &amp; Accounting</option>
+          <option>Operations &amp; Supply Chain</option>
+          <option>HR &amp; Talent</option>
+          <option>Legal &amp; Compliance</option>
+          <option>Marketing &amp; Strategy</option>
+          <option>Product Management</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="section-gap">
+        <p class="section-label">Community eligibility</p>
+      </div>
+
+      <div class="field">
+        <label>Share your GCC experience &amp; network strength which makes you eligible for Insider Programs <span class="req">*</span></label>
+        <textarea id="f-exp2" style="min-height:100px" placeholder="Describe your roles, contributions, network reach across the GCC ecosystem..."></textarea>
+      </div>
+
+      <div class="consent-box">
+        <div class="consent-label">Consent for receiving GCC insights &amp; updates on WhatsApp? <span class="req">*</span></div>
+        <div class="radio-row">
+          <label class="radio-opt"><input type="radio" name="consent" value="Yes"><span>Yes, I consent</span></label>
+          <label class="radio-opt"><input type="radio" name="consent" value="No"><span>No, not now</span></label>
+        </div>
+      </div>
+
+      <div class="section-gap">
+        <p class="section-label">Your access password</p>
+      </div>
+      <p style="font-size:12px;color:#5F5E5A;margin-bottom:8px;">This password is auto-generated for you. It will be emailed to you when your application is approved.</p>
+      <div class="pwd-box">
+        <span class="pwd-val" id="pwd-display">GCC-0000-A</span>
+        <button class="pwd-regen" onclick="regenPwd()">Generate new</button>
+      </div>
+      <p class="pwd-note">Save this password. It will also be sent to your email upon admin approval.</p>
+
+      <button class="btn" id="submit-btn" onclick="submitForm()">Submit application for review</button>
+    </div>
+
+    <div id="success">
+      <div class="success-icon">
+        <svg viewBox="0 0 28 28" fill="none"><path d="M5 14l7 7L23 7" stroke="#1D9E75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2>Application received!</h2>
+      <p>Thank you for applying to the GCCPROs Insider Network. Your application will be reviewed within 2–3 business days. Once approved, your login details will be sent to your email.</p>
+      <div class="pwd-reveal">
+        <div class="pwd-reveal-label">Your auto-generated password — save this now</div>
+        <div class="pwd-reveal-val" id="final-pwd"></div>
+      </div>
+      <p style="font-size:11px;color:#888780;margin-top:12px;">This password will be sent to you again via email once approved.</p>
+    </div>
+  </div>
+</div>
+
+<footer>GCCPROs · Maharashtra · Founded by Shammi Prabhakar Singh</footer>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfbyP7bNDQ1Db4qInbLsjsBjSPXDy8myB07XFDm3qcHh-TVngCeGVlyCYUDeYTbwp5/exec';
+
+function genPwd() {
+  const digits  = Math.floor(1000 + Math.random() * 9000);
+  const alpha   = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const letter  = alpha[Math.floor(Math.random() * alpha.length)];
+  return 'GCC-' + digits + '-' + letter;
+}
+function regenPwd() { document.getElementById('pwd-display').textContent = genPwd(); }
+document.getElementById('pwd-display').textContent = genPwd();
+
+function showErr(m) { const e = document.getElementById('err'); e.textContent = m; e.style.display = 'block'; window.scrollTo(0,0); }
+
+async function submitForm() {
+  document.getElementById('err').style.display = 'none';
+  const name      = document.getElementById('f-name').value.trim();
+  const email     = document.getElementById('f-email').value.trim();
+  const wa        = document.getElementById('f-wa').value.trim();
+  const gccs      = document.getElementById('f-gccs').value.trim();
+  const city      = document.getElementById('f-city').value.trim();
+  const exp       = document.getElementById('f-exp').value;
+  const domain    = document.getElementById('f-domain').value;
+  const exp2      = document.getElementById('f-exp2').value.trim();
+  const li        = document.getElementById('f-li').value.trim();
+  const consent   = document.querySelector('input[name="consent"]:checked');
+  const password  = document.getElementById('pwd-display').textContent;
+
+  if (!name)    { showErr('Please enter your full name.'); return; }
+  if (!email)   { showErr('Please enter your email address.'); return; }
+  if (!wa)      { showErr('Please enter your WhatsApp number.'); return; }
+  if (!gccs)    { showErr('Please enter the GCCs you have worked with.'); return; }
+  if (!city)    { showErr('Please enter your current city.'); return; }
+  if (!exp)     { showErr('Please select your years of experience.'); return; }
+  if (!domain)  { showErr('Please select your domain expertise.'); return; }
+  if (!exp2)    { showErr('Please share your GCC experience and eligibility.'); return; }
+  if (!consent) { showErr('Please select your WhatsApp consent preference.'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  const payload = {
+    fullName: name, email, whatsapp: wa, gccs, city,
+    experience: exp, domain, eligibility: exp2,
+    linkedin: li, consent: consent.value, password
+  };
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) { /* no-cors fetch always throws — that is expected */ }
+
+  document.getElementById('final-pwd').textContent = password;
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('success').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCCPROs — Search Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f4f3f0; min-height: 100vh; }
+  .nav { background: #0F2044; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: #fff; }
+  .logo-sub { font-size: 10px; color: #5DCAA5; letter-spacing: 1px; text-transform: uppercase; }
+  .user-pill { background: #1D3A5F; color: #9FE1CB; font-size: 12px; padding: 5px 12px; border-radius: 20px; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .user-pill:hover { background: #0d5c3a; }
+  .search-zone { background: #fff; border-bottom: 1px solid #E8E6E0; padding: 20px 24px; }
+  .mode-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .mode-btn { font-size: 13px; padding: 7px 16px; border-radius: 20px; border: 1px solid #D3D1C7; background: #f4f3f0; color: #5F5E5A; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+  .mode-btn.active { background: #0F2044; color: #fff; border-color: #0F2044; font-weight: 500; }
+  .search-row { display: flex; gap: 10px; }
+  .search-input { flex: 1; border: 1px solid #D3D1C7; border-radius: 8px; padding: 11px 16px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: #1a2340; outline: none; transition: border 0.15s; }
+  .search-input:focus { border-color: #0F6E56; }
+  .search-btn { background: #0F2044; color: #fff; border: none; border-radius: 8px; padding: 11px 22px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; white-space: nowrap; }
+  .search-btn:hover { background: #1D3A5F; }
+  .hint { font-size: 12px; color: #888780; margin-top: 8px; }
+  /* RESULTS */
+  .results-wrap { padding: 20px 24px; max-width: 720px; margin: 0 auto; }
+  .result-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+  .result-count { font-size: 13px; color: #5F5E5A; }
+  .secure-badge { font-size: 11px; background: #EAF3DE; color: #27500A; padding: 4px 12px; border-radius: 20px; border: 1px solid #97C459; }
+  /* City results list */
+  .result-list { border: 1px solid #E8E6E0; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 18px; }
+  .result-row { display: flex; align-items: center; padding: 13px 18px; border-bottom: 1px solid #f0ede8; cursor: pointer; transition: background 0.1s; user-select: none; -webkit-user-select: none; }
+  .result-row:last-child { border-bottom: none; }
+  .result-row:hover { background: #f8f7f4; }
+  .r-num { font-size: 12px; color: #B4B2A9; width: 24px; flex-shrink: 0; }
+  .r-name { font-size: 14px; font-weight: 500; color: #0F2044; flex: 1; padding: 0 12px; }
+  .r-city { font-size: 12px; color: #888780; margin-right: 12px; }
+  .r-arrow { font-size: 14px; color: #B4B2A9; }
+  /* Pagination */
+  .pagination { display: flex; align-items: center; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .pg-btn { min-width: 34px; height: 34px; border-radius: 8px; border: 1px solid #D3D1C7; background: #fff; font-size: 13px; color: #5F5E5A; cursor: pointer; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; padding: 0 8px; }
+  .pg-btn.active { background: #0F2044; color: #fff; border-color: #0F2044; font-weight: 500; }
+  .pg-btn:hover:not(.active) { background: #f4f3f0; }
+  .pg-info { font-size: 12px; color: #888780; text-align: center; margin-top: 10px; }
+  /* Company detail card */
+  .detail-card { background: #fff; border: 1px solid #E8E6E0; border-radius: 12px; padding: 24px; user-select: none; -webkit-user-select: none; }
+  .detail-card::-moz-selection, .detail-card::selection { background: transparent; }
+  .detail-company { font-family: 'DM Serif Display', serif; font-size: 22px; color: #0F2044; margin-bottom: 4px; }
+  .detail-city-tag { font-size: 13px; color: #0F6E56; font-weight: 500; margin-bottom: 20px; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:500px) { .detail-grid { grid-template-columns: 1fr; } }
+  .detail-field { background: #f8f7f4; border-radius: 8px; padding: 12px 14px; }
+  .detail-field label { font-size: 11px; color: #888780; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+  .detail-field p { font-size: 14px; font-weight: 500; color: #1a2340; }
+  .no-copy-notice { font-size: 11px; color: #B4B2A9; text-align: center; margin-top: 12px; }
+  .back-link { font-size: 13px; color: #0F6E56; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 16px; font-weight: 500; }
+  /* States */
+  .state-box { background: #fff; border: 1px solid #E8E6E0; border-radius: 10px; padding: 40px 24px; text-align: center; }
+  .state-box h3 { font-size: 16px; font-weight: 500; color: #0F2044; margin-bottom: 8px; }
+  .state-box p { font-size: 13px; color: #888780; line-height: 1.5; }
+  .loading-dots { display: flex; gap: 6px; justify-content: center; margin: 16px 0; }
+  .loading-dots span { width: 8px; height: 8px; border-radius: 50%; background: #0F6E56; animation: dot 1.2s ease-in-out infinite; }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot { 0%,80%,100%{opacity:0.2;transform:scale(0.8)} 40%{opacity:1;transform:scale(1)} }
+  footer { text-align: center; font-size: 11px; color: #B4B2A9; padding: 24px; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div>
+    <div class="logo">GCCPROs</div>
+    <div class="logo-sub">Member Search Portal</div>
+  </div>
+  <button class="user-pill" id="user-pill">Loading...</button>
+</div>
+
+<div class="search-zone">
+  <div class="mode-row">
+    <button class="mode-btn active" id="mode-city"    onclick="setMode('city')">Search by city</button>
+    <button class="mode-btn"        id="mode-company" onclick="setMode('company')">Search by company name</button>
+  </div>
+  <div class="search-row">
+    <input class="search-input" id="search-input" placeholder="Type a city name e.g. Pune" onkeydown="if(event.key==='Enter') doSearch()">
+    <button class="search-btn" onclick="doSearch()">Search</button>
+  </div>
+  <div class="hint" id="hint">City search shows matching company names — click any name to view its full profile.</div>
+</div>
+
+<div class="results-wrap" id="results-wrap">
+  <div class="state-box">
+    <h3>Search the GCC database</h3>
+    <p>Select a search mode above, type your query, and click Search.<br>All data is confidential — for verified GCCPROs members only.</p>
+  </div>
+</div>
+
+<footer>GCCPROs · Data is confidential · For verified members only · Founded by Shammi Prabhakar Singh</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfbyP7bNDQ1Db4qInbLsjsBjSPXDy8myB07XFDm3qcHh-TVngCeGVlyCYUDeYTbwp5/exec';
+
+firebase.initializeApp({
+  apiKey: "AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w",
+  authDomain: "gccpros-9aadb.firebaseapp.com",
+  projectId: "gccpros-9aadb",
+  storageBucket: "gccpros-9aadb.firebasestorage.app",
+  messagingSenderId: "764592723192",
+  appId: "1:764592723192:web:002a03f217b57d47f0570d"
+});
+const auth = firebase.auth();
+
+let currentUser = null;
+let currentMode = 'city';
+let lastQuery   = '';
+let lastResults = null;
+
+// ── AUTH GUARD ──────────────────────────────────────────────────────────────
+auth.onAuthStateChanged(user => {
+  if (!user) { window.location.href = 'index.html'; return; }
+  currentUser = user;
+  localStorage.setItem('gcc_token', user.email);
+  const name = user.displayName || user.email.split('@')[0];
+  document.getElementById('user-pill').textContent = name + ' — Sign out';
+});
+
+document.getElementById('user-pill').addEventListener('click', () => {
+  if (confirm('Sign out of GCCPROs?')) { auth.signOut().then(() => window.location.href = 'index.html'); }
+});
+
+// ── SEARCH MODE ─────────────────────────────────────────────────────────────
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('mode-city').classList.toggle('active', mode === 'city');
+  document.getElementById('mode-company').classList.toggle('active', mode === 'company');
+  const input = document.getElementById('search-input');
+  const hint  = document.getElementById('hint');
+  if (mode === 'city') {
+    input.placeholder = 'Type a city name  e.g. Pune, Mumbai, Bengaluru';
+    hint.textContent  = 'City search shows matching company names — click any name to view its full profile.';
+  } else {
+    input.placeholder = 'Type the exact company name  e.g. NielsenIQ India GCC';
+    hint.textContent  = 'Company search returns the full profile of that one company only.';
+  }
+  input.value = '';
+  showState('Search the GCC database', currentMode === 'city'
+    ? 'Type a city name and click Search to see GCCs operating in that city.'
+    : 'Type the exact company name and click Search to view its full profile.');
+}
+
+// ── SEARCH ───────────────────────────────────────────────────────────────────
+async function doSearch(page) {
+  page = page || 1;
+  const q = document.getElementById('search-input').value.trim();
+  if (!q) { alert('Please type a search term first.'); return; }
+  lastQuery = q;
+  showLoading();
+
+  const token = currentUser ? currentUser.email : localStorage.getItem('gcc_token');
+  const url   = SCRIPT_URL
+    + '?token='  + encodeURIComponent(token)
+    + '&type='   + currentMode
+    + '&q='      + encodeURIComponent(q)
+    + '&page='   + page;
+
+  try {
+    const res  = await fetch(url);
+    const data = await res.json();
+    if (data.error === 'Unauthorized') { alert('Session expired. Please log in again.'); auth.signOut(); window.location.href = 'index.html'; return; }
+    if (currentMode === 'city')    renderCityResults(data, page);
+    else                           renderCompanyDetail(data);
+  } catch(e) {
+    showState('Search failed', 'Please check your internet connection and try again.');
+  }
+}
+
+// ── CITY RESULTS ─────────────────────────────────────────────────────────────
+function renderCityResults(data, page) {
+  const wrap = document.getElementById('results-wrap');
+
+  if (!data.results || data.results.length === 0) {
+    showState('No results found', 'No GCCs found in "' + lastQuery + '". Try a different city name.');
+    return;
+  }
+
+  lastResults = data;
+  const startNum = (page - 1) * 10 + 1;
+  const rows = data.results.map((r, i) => `
+    <div class="result-row" onclick="showCompany('${escHtml(r.name)}')" oncontextmenu="return false">
+      <span class="r-num">${startNum + i}</span>
+      <span class="r-name">${escHtml(r.name)}</span>
+      <span class="r-arrow">›</span>
+    </div>`).join('');
+
+  let paginationHtml = '';
+  if (data.pages > 1) {
+    let btns = '';
+    for (let p = 1; p <= data.pages; p++) {
+      btns += `<button class="pg-btn ${p === page ? 'active' : ''}" onclick="doSearch(${p})">${p}</button>`;
+    }
+    paginationHtml = `<div class="pagination">${btns}</div><div class="pg-info">Click any company name to view its full profile</div>`;
+  }
+
+  wrap.innerHTML = `
+    <div class="result-meta">
+      <span class="result-count">Showing ${startNum}–${Math.min(startNum + data.results.length - 1, data.total)} of ${data.total} companies in <strong>${escHtml(lastQuery)}</strong> — Page ${page} of ${data.pages}</span>
+      <span class="secure-badge">Protected · Names only</span>
+    </div>
+    <div class="result-list" oncontextmenu="return false">${rows}</div>
+    ${paginationHtml}`;
+}
+
+// ── COMPANY DETAIL ────────────────────────────────────────────────────────────
+function renderCompanyDetail(data) {
+  const wrap = document.getElementById('results-wrap');
+
+  if (data.error) {
+    wrap.innerHTML = `
+      <span class="back-link" onclick="backToResults()">← Back to results</span>
+      <div class="state-box"><h3>Company not found</h3><p>No exact match for "<strong>${escHtml(lastQuery)}</strong>".<br>Please check the spelling and try again.</p></div>`;
+    return;
+  }
+
+  const field = (label, val) => val
+    ? `<div class="detail-field"><label>${label}</label><p>${escHtml(String(val))}</p></div>` : '';
+
+  wrap.innerHTML = `
+    <span class="back-link" onclick="backToResults()">← Back</span>
+    <div class="detail-card" oncontextmenu="return false" onselectstart="return false">
+      <div class="detail-company">${escHtml(data.companyName || '')}</div>
+      <div class="detail-city-tag">${escHtml(data.gccCity || '')}</div>
+      <div class="detail-grid">
+        ${field('Group company',  data.groupCompany)}
+        ${field('HQ country',    data.hqCountry)}
+        ${field('Headcount',     data.headcount)}
+        ${field('GCC domains',   data.gccDomains)}
+        ${field('Leader 1',      data.leader1)}
+        ${field('Leader 2',      data.leader2)}
+      </div>
+    </div>
+    <div class="no-copy-notice">Data is view-only · Copying and downloading is not permitted · GCCPROs confidential</div>`;
+}
+
+// ── BACK TO RESULTS ───────────────────────────────────────────────────────────
+function showCompany(name) {
+  setMode('company');
+  document.getElementById('search-input').value = name;
+  doSearch();
+}
+
+function backToResults() {
+  if (lastResults) {
+    setMode('city');
+    document.getElementById('search-input').value = lastQuery;
+    renderCityResults(lastResults, lastResults.page || 1);
+  } else {
+    setMode('city');
+    showState('Search the GCC database', 'Type a city name and click Search.');
+  }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function showLoading() {
+  document.getElementById('results-wrap').innerHTML = `
+    <div class="state-box">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <p>Searching the GCC database...</p>
+    </div>`;
+}
+
+function showState(title, msg) {
+  document.getElementById('results-wrap').innerHTML = `
+    <div class="state-box"><h3>${title}</h3><p>${msg}</p></div>`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Block copy on the whole page for extra protection
+document.addEventListener('copy', e => { e.preventDefault(); });
+</script>
+</body>
+</html>

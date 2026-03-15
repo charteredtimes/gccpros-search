@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCCPROs — Member Login</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f4f3f0; min-height: 100vh; display: flex; flex-direction: column; }
+  .top-bar { background: #0F2044; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: #fff; letter-spacing: 0.5px; }
+  .logo-sub { font-size: 11px; color: #5DCAA5; letter-spacing: 1px; text-transform: uppercase; }
+  .hero { background: #0F2044; padding: 36px 28px 52px; text-align: center; }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 28px; color: #fff; margin-bottom: 8px; line-height: 1.3; }
+  .hero p { font-size: 13px; color: #9FE1CB; max-width: 360px; margin: 0 auto; line-height: 1.6; }
+  .card-wrap { display: flex; justify-content: center; padding: 0 16px 40px; margin-top: -28px; }
+  .card { background: #fff; border-radius: 14px; padding: 32px 28px; width: 100%; max-width: 400px; border: 1px solid #E8E6E0; }
+  .card-title { font-size: 17px; font-weight: 500; color: #0F2044; margin-bottom: 4px; }
+  .card-sub { font-size: 12px; color: #888780; margin-bottom: 24px; line-height: 1.5; }
+  label { display: block; font-size: 12px; font-weight: 500; color: #444441; margin-bottom: 5px; }
+  input[type=email], input[type=password] { width: 100%; border: 1px solid #D3D1C7; border-radius: 8px; padding: 11px 14px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: #1a2340; outline: none; transition: border 0.15s; margin-bottom: 16px; }
+  input[type=email]:focus, input[type=password]:focus { border-color: #0F6E56; }
+  .btn { width: 100%; background: #0F2044; color: #fff; border: none; border-radius: 8px; padding: 13px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.15s; margin-top: 4px; }
+  .btn:hover { background: #1D3A5F; }
+  .btn:disabled { background: #B4B2A9; cursor: not-allowed; }
+  .divider { text-align: center; font-size: 12px; color: #B4B2A9; margin: 18px 0; }
+  .link-row { text-align: center; font-size: 13px; color: #888780; }
+  .link-row a { color: #0F6E56; text-decoration: none; font-weight: 500; }
+  .err { background: #FCEBEB; border: 1px solid #F09595; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #791F1F; margin-bottom: 16px; display: none; }
+  .loading { text-align: center; font-size: 13px; color: #888780; margin-top: 12px; display: none; }
+  .sec-note { background: #E1F5EE; border-radius: 8px; padding: 10px 14px; margin-top: 20px; font-size: 12px; color: #085041; line-height: 1.5; }
+  footer { text-align: center; font-size: 11px; color: #B4B2A9; padding: 20px; margin-top: auto; }
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div>
+    <div class="logo">GCCPROs</div>
+    <div class="logo-sub">India GCC Community</div>
+  </div>
+</div>
+<div class="hero">
+  <h1>GCC Professionals<br>Insider Network</h1>
+  <p>India's most curated community of Global Capability Centre leaders.</p>
+</div>
+<div class="card-wrap">
+  <div class="card">
+    <p class="card-title">Member login</p>
+    <p class="card-sub">Access is restricted to verified GCCPROs members only. Your credentials were emailed to you upon approval.</p>
+    <div class="err" id="err"></div>
+    <label>Email address</label>
+    <input type="email" id="email" placeholder="you@company.com">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Your password">
+    <button class="btn" id="btn" onclick="doLogin()">Sign in</button>
+    <div class="loading" id="loading">Verifying your credentials...</div>
+    <div class="divider">— or —</div>
+    <div class="link-row">Not yet a member? <a href="register.html">Apply for access</a></div>
+    <div class="sec-note">This portal is private. Data is confidential and for verified GCCPROs members only.</div>
+  </div>
+</div>
+<footer>GCCPROs · India · Founded by Shammi Prabhakar Singh</footer>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w",
+  authDomain: "gccpros-9aadb.firebaseapp.com",
+  projectId: "gccpros-9aadb",
+  storageBucket: "gccpros-9aadb.firebasestorage.app",
+  messagingSenderId: "764592723192",
+  appId: "1:764592723192:web:002a03f217b57d47f0570d"
+});
+const auth = firebase.auth();
+auth.onAuthStateChanged(u => {
+  if (u) { localStorage.setItem('gcc_token', u.email); window.location.href = 'search.html'; }
+});
+function showErr(m) { const e = document.getElementById('err'); e.textContent = m; e.style.display = 'block'; }
+async function doLogin() {
+  const email = document.getElementById('email').value.trim();
+  const pass  = document.getElementById('password').value;
+  document.getElementById('err').style.display = 'none';
+  if (!email || !pass) { showErr('Please enter your email and password.'); return; }
+  document.getElementById('btn').disabled = true;
+  document.getElementById('loading').style.display = 'block';
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
+  } catch(e) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('btn').disabled = false;
+    if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+      showErr('Incorrect email or password. Please check and try again.');
+    } else if (e.code === 'auth/too-many-requests') {
+      showErr('Too many attempts. Please wait a few minutes and try again.');
+    } else { showErr('Login failed. Please contact the GCCPROs admin.'); }
+  }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+</script>
+</body>
+</html>
