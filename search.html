@@ -288,26 +288,14 @@ async function changePassword() {
     // Now update to new password
     await user.updatePassword(newPwd);
 
-    // Sync new password back to Google Sheet
+    // Sync new password back to Google Sheet via GET (avoids doPost conflict)
     try {
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = SCRIPT_URL;
-      form.target = 'hidden-iframe';
-      form.style.display = 'none';
-      const fields = { action: 'updatePassword', email: user.email, newPassword: newPwd };
-      Object.keys(fields).forEach(key => {
-        const input = document.createElement('input');
-        input.type = 'hidden'; input.name = key; input.value = fields[key];
-        form.appendChild(input);
-      });
-      let iframe = document.getElementById('hidden-iframe');
-      if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.name = 'hidden-iframe'; iframe.id = 'hidden-iframe';
-        iframe.style.display = 'none'; document.body.appendChild(iframe);
-      }
-      document.body.appendChild(form); form.submit(); document.body.removeChild(form);
+      const syncUrl = SCRIPT_URL
+        + '?action=updatePassword'
+        + '&email='       + encodeURIComponent(user.email)
+        + '&newPassword=' + encodeURIComponent(newPwd)
+        + '&token='       + encodeURIComponent(user.email);
+      await fetch(syncUrl);
     } catch(syncErr) { console.log('Sheet sync note:', syncErr); }
 
     okBox.style.display = 'block';
