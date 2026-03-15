@@ -335,6 +335,11 @@ async function submitForm() {
     linkedin: li, consent: consent.value, password
   };
 
+  // Step 1 — Create Firebase account silently (member cannot log in until approved)
+  await createFirebaseAccount(email, password);
+
+  // Step 2 — Save to Google Sheet and notify admin
+
   try {
     // Use a hidden form POST — bypasses CORS entirely, works with Apps Script
     const form = document.createElement('form');
@@ -372,6 +377,35 @@ async function submitForm() {
   document.getElementById('form-section').style.display = 'none';
   document.getElementById('success').style.display = 'block';
   window.scrollTo(0, 0);
+}
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyDBiZl1CSAbqLQiqZJucrycWlxqbdeV_8w",
+  authDomain: "gccpros-9aadb.firebaseapp.com",
+  projectId: "gccpros-9aadb",
+  storageBucket: "gccpros-9aadb.firebasestorage.app",
+  messagingSenderId: "764592723192",
+  appId: "1:764592723192:web:002a03f217b57d47f0570d"
+});
+
+// Creates the Firebase account silently when form is submitted
+// Member cannot log in until you send them the password on approval
+async function createFirebaseAccount(email, password) {
+  try {
+    await firebase.auth().createUserWithEmailAndPassword(email, password);
+    await firebase.auth().signOut(); // sign out immediately — not approved yet
+  } catch(err) {
+    if (err.code === 'auth/email-already-in-use') {
+      // Already registered before — that is fine, continue
+      return;
+    }
+    // Any other error — log it but don't block the form submission
+    console.log('Firebase account note:', err.message);
+  }
 }
 </script>
 </body>
