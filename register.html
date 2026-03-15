@@ -87,14 +87,17 @@
       <div class="field">
         <label>Email address <span class="req">*</span></label>
         <input type="email" id="f-email" placeholder="you@company.com">
+        <span id="f-email-hint" style="display:none;font-size:11px;color:#E24B4A;margin-top:4px;display:none;"></span>
       </div>
       <div class="field">
         <label>WhatsApp number <span class="req">*</span></label>
         <input type="tel" id="f-wa" placeholder="+91 98765 43210">
+        <span id="f-wa-hint" style="display:none;font-size:11px;color:#E24B4A;margin-top:4px;"></span>
       </div>
       <div class="field">
         <label>LinkedIn profile link <span class="req">*</span></label>
         <input type="url" id="f-li" placeholder="https://linkedin.com/in/yourprofile">
+        <span id="f-li-hint" style="display:none;font-size:11px;color:#E24B4A;margin-top:4px;"></span>
       </div>
 
       <div class="section-gap">
@@ -186,56 +189,116 @@
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfbyP7bNDQ1Db4qInbLsjsBjSPXDy8myB07XFDm3qcHh-TVngCeGVlyCYUDeYTbwp5/exec';
 
+/* ── PASSWORD GENERATOR ─────────────────────────────────────── */
 function genPwd() {
-  const digits  = Math.floor(1000 + Math.random() * 9000);
-  const alpha   = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-  const letter  = alpha[Math.floor(Math.random() * alpha.length)];
-  return 'GCC-' + digits + '-' + letter;
+  const digits = Math.floor(1000 + Math.random() * 9000);
+  const alpha  = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  return 'GCC-' + digits + '-' + alpha[Math.floor(Math.random() * alpha.length)];
 }
 function regenPwd() { document.getElementById('pwd-display').textContent = genPwd(); }
-document.getElementById('pwd-display').textContent = genPwd();
 
-function showErr(m) { const e = document.getElementById('err'); e.textContent = m; e.style.display = 'block'; window.scrollTo(0,0); }
-
-// Live field validation on blur (when user leaves a field)
-function validateField(id, checkFn, errMsg) {
-  const el = document.getElementById(id);
-  el.addEventListener('blur', () => {
-    const val = el.value.trim();
-    if (val && !checkFn(val)) {
-      el.style.borderColor = '#E24B4A';
-      el.title = errMsg;
-    } else {
-      el.style.borderColor = '';
-      el.title = '';
-    }
-  });
-  el.addEventListener('input', () => {
-    if (el.style.borderColor === 'rgb(226, 75, 74)') {
-      const val = el.value.trim();
-      if (checkFn(val)) { el.style.borderColor = '#1D9E75'; el.title = ''; }
-    }
-  });
+/* ── FIELD HELPER FUNCTIONS ─────────────────────────────────── */
+function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
+function isValidPhone(v) {
+  const d = v.replace(/[\s\+\-\(\)]/g, '');
+  return /^\d+$/.test(d) && d.length >= 10;
 }
-validateField('f-email', v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), 'Enter a valid email e.g. you@company.com');
-validateField('f-wa',    v => { const d = v.replace(/[\s\+\-\(\)]/g,''); return /^\d+$/.test(d) && d.length >= 10; }, 'Enter at least 10 digits');
-validateField('f-li',    v => { try { const u = new URL(v.startsWith('http') ? v : 'https://'+v); return u.hostname.includes('linkedin.com'); } catch(e){ return false; } }, 'Enter a valid linkedin.com URL');
+function isValidLinkedIn(v) {
+  try {
+    const url = new URL(v.startsWith('http') ? v : 'https://' + v);
+    return url.hostname.replace('www.','').startsWith('linkedin.com');
+  } catch(e) { return false; }
+}
 
+/* ── INLINE ERROR DISPLAY ───────────────────────────────────── */
+function setFieldError(id, msg) {
+  const el   = document.getElementById(id);
+  const hint = document.getElementById(id + '-hint');
+  el.style.borderColor = '#E24B4A';
+  if (hint) { hint.textContent = msg; hint.style.display = 'block'; }
+}
+function clearFieldError(id) {
+  const el   = document.getElementById(id);
+  const hint = document.getElementById(id + '-hint');
+  el.style.borderColor = '#1D9E75';
+  if (hint) { hint.style.display = 'none'; }
+}
+function resetField(id) {
+  const el   = document.getElementById(id);
+  const hint = document.getElementById(id + '-hint');
+  el.style.borderColor = '';
+  if (hint) { hint.style.display = 'none'; }
+}
+
+/* ── TOP ERROR BANNER ───────────────────────────────────────── */
+function showErr(m) {
+  const e = document.getElementById('err');
+  e.textContent = m;
+  e.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function hideErr() { document.getElementById('err').style.display = 'none'; }
+
+/* ── LIVE VALIDATION ON BLUR ────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', function() {
+
+  document.getElementById('pwd-display').textContent = genPwd();
+
+  /* Email */
+  const emailEl = document.getElementById('f-email');
+  emailEl.addEventListener('blur', function() {
+    const v = this.value.trim();
+    if (!v) return resetField('f-email');
+    if (!isValidEmail(v)) setFieldError('f-email', 'Please enter a valid email — e.g. yourname@company.com');
+    else clearFieldError('f-email');
+  });
+  emailEl.addEventListener('input', function() {
+    if (isValidEmail(this.value.trim())) clearFieldError('f-email');
+  });
+
+  /* WhatsApp */
+  const waEl = document.getElementById('f-wa');
+  waEl.addEventListener('blur', function() {
+    const v = this.value.trim();
+    if (!v) return resetField('f-wa');
+    if (!isValidPhone(v)) setFieldError('f-wa', 'Must be at least 10 digits — e.g. +91 98765 43210');
+    else clearFieldError('f-wa');
+  });
+  waEl.addEventListener('input', function() {
+    if (isValidPhone(this.value.trim())) clearFieldError('f-wa');
+  });
+
+  /* LinkedIn */
+  const liEl = document.getElementById('f-li');
+  liEl.addEventListener('blur', function() {
+    const v = this.value.trim();
+    if (!v) return resetField('f-li');
+    if (!isValidLinkedIn(v)) setFieldError('f-li', 'Must be a valid LinkedIn URL — e.g. https://linkedin.com/in/yourname');
+    else clearFieldError('f-li');
+  });
+  liEl.addEventListener('input', function() {
+    if (isValidLinkedIn(this.value.trim())) clearFieldError('f-li');
+  });
+
+});
+
+/* ── SUBMIT WITH FULL VALIDATION ────────────────────────────── */
 async function submitForm() {
-  document.getElementById('err').style.display = 'none';
-  const name      = document.getElementById('f-name').value.trim();
-  const email     = document.getElementById('f-email').value.trim();
-  const wa        = document.getElementById('f-wa').value.trim();
-  const gccs      = document.getElementById('f-gccs').value.trim();
-  const city      = document.getElementById('f-city').value.trim();
-  const exp       = document.getElementById('f-exp').value;
-  const domain    = document.getElementById('f-domain').value;
-  const exp2      = document.getElementById('f-exp2').value.trim();
-  const li        = document.getElementById('f-li').value.trim();
-  const consent   = document.querySelector('input[name="consent"]:checked');
-  const password  = document.getElementById('pwd-display').textContent;
+  hideErr();
 
-  // Required field checks
+  const name    = document.getElementById('f-name').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  const wa      = document.getElementById('f-wa').value.trim();
+  const gccs    = document.getElementById('f-gccs').value.trim();
+  const city    = document.getElementById('f-city').value.trim();
+  const exp     = document.getElementById('f-exp').value;
+  const domain  = document.getElementById('f-domain').value;
+  const exp2    = document.getElementById('f-exp2').value.trim();
+  const li      = document.getElementById('f-li').value.trim();
+  const consent = document.querySelector('input[name="consent"]:checked');
+  const password = document.getElementById('pwd-display').textContent;
+
+  /* Required checks */
   if (!name)    { showErr('Please enter your full name.'); return; }
   if (!email)   { showErr('Please enter your email address.'); return; }
   if (!wa)      { showErr('Please enter your WhatsApp number.'); return; }
@@ -247,29 +310,21 @@ async function submitForm() {
   if (!li)      { showErr('Please enter your LinkedIn profile link.'); return; }
   if (!consent) { showErr('Please select your WhatsApp consent preference.'); return; }
 
-  // Format validations
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    showErr('Please enter a valid email address (e.g. yourname@company.com).'); return;
+  /* Format checks */
+  if (!isValidEmail(email)) {
+    setFieldError('f-email', 'Please enter a valid email — e.g. yourname@company.com');
+    showErr('Email address format is not valid. Please check and correct it.'); return;
+  }
+  if (!isValidPhone(wa)) {
+    setFieldError('f-wa', 'Must be at least 10 digits — e.g. +91 98765 43210');
+    showErr('WhatsApp number must be at least 10 digits.'); return;
+  }
+  if (!isValidLinkedIn(li)) {
+    setFieldError('f-li', 'Must be a valid LinkedIn URL — e.g. https://linkedin.com/in/yourname');
+    showErr('LinkedIn URL is not valid. It must contain linkedin.com.'); return;
   }
 
-  const phoneDigits = wa.replace(/[\s\+\-\(\)]/g, '');
-  if (!/^\d+$/.test(phoneDigits)) {
-    showErr('WhatsApp number must contain digits only (spaces, +, - are allowed).'); return;
-  }
-  if (phoneDigits.length < 10) {
-    showErr('WhatsApp number must be at least 10 digits (e.g. +91 98765 43210).'); return;
-  }
-
-  const liTrimmed = li.startsWith('http://') || li.startsWith('https://')
-    ? li : 'https://' + li;
-  try { new URL(liTrimmed); } catch(e) {
-    showErr('Please enter a valid LinkedIn URL (e.g. https://linkedin.com/in/yourname).'); return;
-  }
-  if (!liTrimmed.toLowerCase().includes('linkedin.com')) {
-    showErr('Please enter a LinkedIn URL — it must contain linkedin.com.'); return;
-  }
-
+  /* Submit */
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.textContent = 'Submitting...';
@@ -282,12 +337,11 @@ async function submitForm() {
 
   try {
     await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-  } catch(e) { /* no-cors fetch always throws — that is expected */ }
+  } catch(e) { /* no-cors always throws — expected */ }
 
   document.getElementById('final-pwd').textContent = password;
   document.getElementById('form-section').style.display = 'none';
