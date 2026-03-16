@@ -245,7 +245,7 @@ async function doSearch(page){
 function renderResults(data,page){
   const wrap=document.getElementById('results-wrap');
   if(!data.results||data.results.length===0){
-    document.getElementById('results-wrap').innerHTML=`<div class="state-box"><h3>No results found</h3><p>Nothing matched "<strong>${escHtml(lastQuery)}</strong>" in the ${escHtml(FIELD_META[lastField].label)} field. Try a different search term.</p></div><div class="submit-nudge" onclick="openSubmitModal()"><div class="nudge-icon">+</div><div class="nudge-text"><strong>Couldn't find your GCC in this list?</strong><span>Submit the details to strengthen the community — your GCC could help 2,400+ professionals.</span></div><div class="nudge-arrow">›</div></div>`;
+    document.getElementById('results-wrap').innerHTML=`<div class="state-box"><h3>No results found</h3><p>Nothing matched "<strong>${escHtml(lastQuery)}</strong>" in the ${escHtml(FIELD_META[lastField].label)} field. Try a different search term.</p></div><div class="submit-nudge" onclick="openSubmitModal()"><div class="nudge-icon">+</div><div class="nudge-text"><strong>Couldn't find your GCC in this list?</strong><span>Submit the details to strengthen the community — your valuable inputs could help over 2 million professionals.</span></div><div class="nudge-arrow">›</div></div>`;
     return;
   }
   lastResults=data;
@@ -257,7 +257,7 @@ function renderResults(data,page){
     let btns='';for(let p=1;p<=data.pages;p++){btns+=`<button class="pg-btn ${p===page?'active':''}" onclick="doSearch(${p})">${p}</button>`;}
     pagination=`<div class="pagination">${btns}</div><div class="pg-info">Click any company name to view its full profile</div>`;
   }
-  wrap.innerHTML=`<div class="result-meta"><span class="result-count">Showing ${startNum}–${Math.min(startNum+data.results.length-1,data.total)} of <strong>${data.total}</strong> results for "<strong>${escHtml(lastQuery)}</strong>" in ${escHtml(fieldLabel)} — Page ${page} of ${data.pages}</span><span class="secure-badge">Protected · View only</span></div><div class="result-list" oncontextmenu="return false">${rows}</div>${pagination}<div class="submit-nudge" onclick="openSubmitModal()"><div class="nudge-icon">+</div><div class="nudge-text"><strong>Couldn't find your GCC in this list?</strong><span>Submit the details to strengthen the community — your GCC could help 2,400+ professionals.</span></div><div class="nudge-arrow">›</div></div>`;
+  wrap.innerHTML=`<div class="result-meta"><span class="result-count">Showing ${startNum}–${Math.min(startNum+data.results.length-1,data.total)} of <strong>${data.total}</strong> results for "<strong>${escHtml(lastQuery)}</strong>" in ${escHtml(fieldLabel)} — Page ${page} of ${data.pages}</span><span class="secure-badge">Protected · View only</span></div><div class="result-list" oncontextmenu="return false">${rows}</div>${pagination}<div class="submit-nudge" onclick="openSubmitModal()"><div class="nudge-icon">+</div><div class="nudge-text"><strong>Couldn't find your GCC in this list?</strong><span>Submit the details to strengthen the community — your valuable inputs could help over 2 millions GCC professionals.</span></div><div class="nudge-arrow">›</div></div>`;
 }
 
 async function showCompanyDetail(name){
