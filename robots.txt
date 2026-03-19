@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /gccpros-search/search.html
+Disallow: /gccpros-search/register.html
+Disallow: /gccpros-search/faq-loyalty.html
+Allow: /gccpros-search/index.html
