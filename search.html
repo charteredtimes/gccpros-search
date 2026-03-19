@@ -6,88 +6,102 @@
 <title>GCCPROs — Search Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+
+  :root {
+    --ink: #0A1628;
+    --gold: #C9973A;
+    --gold-light: #F0C87A;
+    --blue: #1A3A6B;
+    --blue-mid: #2356A4;
+    --blue-light: #EBF1FB;
+    --cream: #FAF7F2;
+    --white: #FFFFFF;
+    --muted: #6B7A99;
+    --border: rgba(26,58,107,0.1);
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: #EBF2FB; min-height: 100vh; }
-  .nav { background: #1565C0; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #0D47A1; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); min-height: 100vh; }
+  .nav { background: #0A1628; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(201,151,58,0.2); }
   .logo-img { display: none; }
   .nav-right { display: flex; align-items: center; gap: 8px; }
-  .nav-tag { font-size: 11px; color: #BBDEFB; letter-spacing: 1px; text-transform: uppercase; }
-  .user-pill { background: #0D47A1; color: #90CAF9; font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid #1976D2; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; }
+  .nav-tag { font-size: 11px; color: rgba(255,255,255,0.65); letter-spacing: 1px; text-transform: uppercase; }
+  .user-pill { background: var(--blue); color: #90CAF9; font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid #1976D2; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; }
   .user-pill:hover { background: #E53935; color: #fff; border-color: #E53935; }
-  .pwd-btn { background: transparent; color: #BBDEFB; font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; }
+  .pwd-btn { background: transparent; color: rgba(255,255,255,0.65); font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; }
   .pwd-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,71,161,0.5); z-index: 1000; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: #fff; border-radius: 16px; padding: 32px 28px; width: 100%; max-width: 380px; margin: 16px; box-shadow: 0 8px 40px rgba(13,71,161,0.2); }
-  .modal h3 { font-size: 18px; font-weight: 500; color: #0D47A1; margin-bottom: 6px; }
+  .modal h3 { font-size: 18px; font-weight: 500; color: var(--blue); margin-bottom: 6px; }
   .modal-sub { font-size: 12px; color: #90A4AE; margin-bottom: 20px; line-height: 1.5; }
   .modal label { display: block; font-size: 12px; font-weight: 500; color: #37474F; margin-bottom: 5px; }
   .modal input[type=password] { width: 100%; border: 1.5px solid #BBDEFB; border-radius: 8px; padding: 11px 14px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: #1a2340; outline: none; transition: border 0.15s; background: #FAFCFF; margin-bottom: 14px; }
-  .modal input[type=password]:focus { border-color: #1565C0; background: #fff; }
+  .modal input[type=password]:focus { border-color: var(--blue-mid); background: #fff; }
   .modal-btns { display: flex; gap: 10px; margin-top: 4px; }
-  .modal-save { flex: 1; background: #1565C0; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; }
-  .modal-save:hover { background: #0D47A1; }
+  .modal-save { flex: 1; background: #0A1628; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .modal-save:hover { background: var(--blue); }
   .modal-save:disabled { background: #90CAF9; cursor: not-allowed; }
-  .modal-cancel { flex: 1; background: #EBF2FB; color: #1565C0; border: none; border-radius: 8px; padding: 12px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+  .modal-cancel { flex: 1; background: var(--cream); color: var(--blue-mid); border: none; border-radius: 8px; padding: 12px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; }
   .modal-cancel:hover { background: #E3F2FD; }
   .modal-err { background: #FFEBEE; border: 1.5px solid #EF9A9A; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #B71C1C; margin-bottom: 14px; display: none; line-height: 1.5; }
   .modal-ok  { background: #E8F5E9; border: 1.5px solid #A5D6A7; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #1B5E20; margin-bottom: 14px; display: none; line-height: 1.5; }
   .search-zone { background: #fff; border-bottom: 2px solid #E3F2FD; padding: 20px 24px; box-shadow: 0 2px 8px rgba(21,101,192,0.08); }
   .mode-row { display: flex; gap: 10px; margin-bottom: 14px; align-items: center; flex-wrap: wrap; }
   .field-label { font-size: 12px; font-weight: 500; color: #37474F; white-space: nowrap; }
-  .field-select { border: 1.5px solid #BBDEFB; border-radius: 8px; padding: 9px 36px 9px 14px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: #0D47A1; background: #EBF2FB; outline: none; cursor: pointer; font-weight: 500; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%231565C0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; transition: border 0.15s; }
-  .field-select:focus { border-color: #1565C0; background-color: #fff; }
+  .field-select { border: 1.5px solid #BBDEFB; border-radius: 8px; padding: 9px 36px 9px 14px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--blue); background: var(--cream); outline: none; cursor: pointer; font-weight: 500; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%231565C0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; transition: border 0.15s; }
+  .field-select:focus { border-color: var(--blue-mid); background-color: #fff; }
   .search-row { display: flex; gap: 10px; }
   .search-input { flex: 1; border: 1.5px solid #BBDEFB; border-radius: 8px; padding: 12px 16px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: #1a2340; outline: none; transition: border 0.15s; background: #FAFCFF; }
-  .search-input:focus { border-color: #1565C0; background: #fff; }
-  .search-btn { background: #1565C0; color: #fff; border: none; border-radius: 8px; padding: 12px 24px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; white-space: nowrap; letter-spacing: 0.3px; }
-  .search-btn:hover { background: #0D47A1; }
+  .search-input:focus { border-color: var(--blue-mid); background: #fff; }
+  .search-btn { background: #0A1628; color: #fff; border: none; border-radius: 8px; padding: 12px 24px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; white-space: nowrap; letter-spacing: 0.3px; }
+  .search-btn:hover { background: var(--blue); }
   .hint { font-size: 12px; color: #90A4AE; margin-top: 8px; }
   .results-wrap { padding: 20px 24px; max-width: 740px; margin: 0 auto; }
   .result-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
   .result-count { font-size: 13px; color: #546E7A; }
-  .secure-badge { font-size: 11px; background: #E3F2FD; color: #0D47A1; padding: 4px 12px; border-radius: 20px; border: 1px solid #90CAF9; font-weight: 500; }
-  .result-list { border: 1.5px solid #E3F2FD; border-radius: 12px; overflow: hidden; background: #fff; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(21,101,192,0.06); }
+  .secure-badge { font-size: 11px; background: #E3F2FD; color: var(--blue); padding: 4px 12px; border-radius: 20px; border: 1px solid #90CAF9; font-weight: 500; }
+  .result-list { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(21,101,192,0.06); }
   .result-row { display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid #F0F7FF; cursor: pointer; transition: background 0.1s; user-select: none; -webkit-user-select: none; }
   .result-row:last-child { border-bottom: none; }
   .result-row:hover { background: #E3F2FD; }
   .r-num { font-size: 12px; color: #90CAF9; width: 26px; flex-shrink: 0; font-weight: 500; }
   .r-body { flex: 1; padding: 0 12px; display: flex; flex-direction: column; gap: 2px; }
-  .r-name { font-size: 14px; font-weight: 500; color: #0D47A1; }
-  .r-match { font-size: 11px; color: #1565C0; opacity: 0.7; }
-  .r-arrow { font-size: 16px; color: #1565C0; }
+  .r-name { font-size: 14px; font-weight: 500; color: var(--blue); }
+  .r-match { font-size: 11px; color: var(--blue-mid); opacity: 0.7; }
+  .r-arrow { font-size: 16px; color: var(--blue-mid); }
   .pagination { display: flex; align-items: center; gap: 6px; justify-content: center; flex-wrap: wrap; }
-  .pg-btn { min-width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid #BBDEFB; background: #fff; font-size: 13px; color: #1565C0; cursor: pointer; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; padding: 0 8px; font-weight: 500; }
-  .pg-btn.active { background: #1565C0; color: #fff; border-color: #1565C0; }
+  .pg-btn { min-width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid #BBDEFB; background: #fff; font-size: 13px; color: var(--blue-mid); cursor: pointer; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; padding: 0 8px; font-weight: 500; }
+  .pg-btn.active { background: #0A1628; color: #fff; border-color: var(--blue-mid); }
   .pg-btn:hover:not(.active) { background: #E3F2FD; }
   .pg-info { font-size: 12px; color: #90A4AE; text-align: center; margin-top: 10px; }
   .submit-nudge { display:flex; align-items:center; gap:16px; background:#fff; border:2px solid #1565C0; border-radius:12px; padding:18px 20px; margin-top:20px; cursor:pointer; transition:background 0.15s, transform 0.15s; }
   .submit-nudge:hover { background:#E3F2FD; transform:translateY(-2px); }
-  .nudge-icon { width:40px; height:40px; border-radius:50%; background:#1565C0; color:#fff; font-size:22px; font-weight:300; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .nudge-icon { width:40px; height:40px; border-radius:50%; background:#0A1628; color:#fff; font-size:22px; font-weight:300; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .nudge-text { flex:1; display:flex; flex-direction:column; gap:4px; }
-  .nudge-text strong { font-size:15px; font-weight:500; color:#0D47A1; }
+  .nudge-text strong { font-size:15px; font-weight:500; color:var(--blue); }
   .nudge-text span { font-size:13px; color:#5F5E5A; }
-  .nudge-arrow { font-size:22px; color:#1565C0; font-weight:500; }
-  .detail-card { background: #fff; border: 1.5px solid #E3F2FD; border-radius: 14px; padding: 26px; user-select: none; -webkit-user-select: none; box-shadow: 0 2px 12px rgba(21,101,192,0.08); }
-  .detail-company { font-family: 'DM Serif Display', serif; font-size: 24px; color: #0D47A1; margin-bottom: 4px; }
-  .detail-city-tag { font-size: 13px; color: #1565C0; font-weight: 500; margin-bottom: 22px; background: #E3F2FD; display: inline-block; padding: 4px 12px; border-radius: 20px; }
+  .nudge-arrow { font-size:22px; color:var(--blue-mid); font-weight:500; }
+  .detail-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 26px; user-select: none; -webkit-user-select: none; box-shadow: 0 2px 12px rgba(21,101,192,0.08); }
+  .detail-company { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--blue); margin-bottom: 4px; }
+  .detail-city-tag { font-size: 13px; color: var(--blue-mid); font-weight: 500; margin-bottom: 22px; background: #E3F2FD; display: inline-block; padding: 4px 12px; border-radius: 20px; }
   .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media(max-width:500px){.detail-grid{grid-template-columns:1fr;}}
   .detail-field { background: #F0F7FF; border-radius: 8px; padding: 12px 14px; border-left: 3px solid #1565C0; }
-  .detail-field label { font-size: 10px; color: #1565C0; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
-  .detail-field p { font-size: 14px; font-weight: 500; color: #0D47A1; }
+  .detail-field label { font-size: 10px; color: var(--blue-mid); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+  .detail-field p { font-size: 14px; font-weight: 500; color: var(--blue); }
   .no-copy-notice { font-size: 11px; color: #B0BEC5; text-align: center; margin-top: 12px; }
   .correction-bar { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:14px; padding:13px 16px; background:#FFF8E1; border:1px solid #FFE082; border-radius:10px; cursor:pointer; transition:background 0.15s; }
   .correction-bar:hover { background:#FFF3CD; }
   .correction-bar span { font-size:13px; color:#F57F17; font-weight:500; }
   .correction-bar small { font-size:12px; color:#F9A825; }
-  .back-link { font-size: 13px; color: #1565C0; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 16px; font-weight: 500; }
-  .back-link:hover { color: #0D47A1; }
-  .state-box { background: #fff; border: 1.5px solid #E3F2FD; border-radius: 12px; padding: 48px 24px; text-align: center; box-shadow: 0 2px 8px rgba(21,101,192,0.06); }
-  .state-box h3 { font-size: 17px; font-weight: 500; color: #0D47A1; margin-bottom: 8px; }
+  .back-link { font-size: 13px; color: var(--blue-mid); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 16px; font-weight: 500; }
+  .back-link:hover { color: var(--blue); }
+  .state-box { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 48px 24px; text-align: center; box-shadow: 0 2px 8px rgba(21,101,192,0.06); }
+  .state-box h3 { font-size: 17px; font-weight: 500; color: var(--blue); margin-bottom: 8px; }
   .state-box p { font-size: 13px; color: #90A4AE; line-height: 1.6; }
   .loading-dots { display: flex; gap: 6px; justify-content: center; margin: 16px 0; }
-  .loading-dots span { width: 9px; height: 9px; border-radius: 50%; background: #1565C0; animation: dot 1.2s ease-in-out infinite; }
+  .loading-dots span { width: 9px; height: 9px; border-radius: 50%; background: #0A1628; animation: dot 1.2s ease-in-out infinite; }
   .loading-dots span:nth-child(2){animation-delay:.2s;}
   .loading-dots span:nth-child(3){animation-delay:.4s;}
   @keyframes dot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
@@ -100,23 +114,23 @@
   .search-zone { background: rgba(255,255,255,0.97); border-bottom: none; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
   .results-wrap { max-width: 780px; margin: 0 auto; padding: 20px 24px; }
   .result-list { box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: none; }
-  .r-name { color: #0D47A1; font-weight: 600; font-size: 15px; }
-  .r-match { color: #1565C0; font-size: 12px; opacity: 0.85; }
+  .r-name { color: var(--blue); font-weight: 600; font-size: 15px; }
+  .r-match { color: var(--blue-mid); font-size: 12px; opacity: 0.85; }
   .result-row:hover { background: linear-gradient(90deg, #E3F2FD, #F0F7FF); }
   .state-box { background: rgba(255,255,255,0.97); box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: none; }
-  .state-box h3 { color: #0D47A1; font-size: 18px; }
+  .state-box h3 { color: var(--blue); font-size: 18px; }
   .state-box p { color: #546E7A; }
   .result-meta .result-count { color: #fff; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
   .secure-badge { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
   .detail-card { box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: none; }
-  .detail-company { color: #0D47A1; font-size: 26px; }
+  .detail-company { color: var(--blue); font-size: 26px; }
   .detail-field { background: linear-gradient(135deg, #E3F2FD, #F0F7FF); border-left: 3px solid #1565C0; }
-  .detail-field label { color: #1565C0; font-weight: 600; }
+  .detail-field label { color: var(--blue-mid); font-weight: 600; }
   .detail-field p { color: #0D1829; font-size: 15px; font-weight: 600; }
   .back-link { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-  .back-link:hover { color: #BBDEFB; }
-  .pg-btn { background: rgba(255,255,255,0.9); border-color: rgba(255,255,255,0.5); color: #0D47A1; font-weight: 600; }
-  .pg-btn.active { background: #fff; color: #0D47A1; border-color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+  .back-link:hover { color: rgba(255,255,255,0.65); }
+  .pg-btn { background: rgba(255,255,255,0.9); border-color: rgba(255,255,255,0.5); color: var(--blue); font-weight: 600; }
+  .pg-btn.active { background: #fff; color: var(--blue); border-color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
   .pg-info { color: rgba(255,255,255,0.8); }
   .submit-nudge { background: rgba(255,255,255,0.97); border: 2px solid #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
   .submit-nudge:hover { background: #E3F2FD; }
@@ -489,7 +503,7 @@ function showRateLimitError(rate) {
   document.getElementById('results-wrap').innerHTML = `
     <div class="state-box" style="border:2px solid #E3F2FD;">
       <div style="width:56px;height:56px;border-radius:50%;background:#E3F2FD;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;">⏳</div>
-      <h3 style="color:#0D47A1;">Daily search limit reached</h3>
+      <h3 style="color:var(--blue);">Daily search limit reached</h3>
       <p style="margin-top:8px;">You have used all <strong>${DAILY_LIMIT} searches</strong> for today.<br>Your limit resets in <strong>${timeLeft}</strong>.</p>
       <p style="margin-top:12px;font-size:12px;color:#B0BEC5;">This limit keeps the database secure and fair for all members.</p>
     </div>`;
@@ -983,7 +997,7 @@ function openLeaderboard() {
   m.id = 'lb-modal';
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;';
   m.innerHTML = `<div style="background:#fff;border-radius:16px;padding:28px;max-width:480px;width:90%;text-align:center;">
-    <p style="color:#1565C0;font-weight:600;">Loading leaderboard...</p></div>`;
+    <p style="color:var(--blue-mid);font-weight:600;">Loading leaderboard...</p></div>`;
   document.body.appendChild(m);
   m.addEventListener('click', ev => { if(ev.target===m) m.remove(); });
 
@@ -994,13 +1008,13 @@ function openLeaderboard() {
       if (data.error) {
         document.getElementById('lb-modal').querySelector('div').innerHTML =
           '<p style="color:#E53935;font-weight:600;">⚠️ ' + (data.error==='Session expired. Please log in again.' ? 'Session expired — please refresh the page.' : 'Could not load leaderboard. Try again.') + '</p>' +
-          '<button onclick="document.getElementById(\"lb-modal\").remove()" style="margin-top:12px;padding:8px 20px;background:#1565C0;color:#fff;border:none;border-radius:8px;cursor:pointer;">Close</button>';
+          '<button onclick="document.getElementById(\"lb-modal\").remove()" style="margin-top:12px;padding:8px 20px;background:#0A1628;color:#fff;border:none;border-radius:8px;cursor:pointer;">Close</button>';
         return;
       }
       if (!data.leaderboard || data.leaderboard.length === 0) {
         document.getElementById('lb-modal').querySelector('div').innerHTML =
           '<p style="color:#546E7A;">No leaderboard data yet. Start contributing to earn coins!</p>' +
-          '<button onclick="document.getElementById(\"lb-modal\").remove()" style="margin-top:12px;padding:8px 20px;background:#1565C0;color:#fff;border:none;border-radius:8px;cursor:pointer;">Close</button>';
+          '<button onclick="document.getElementById(\"lb-modal\").remove()" style="margin-top:12px;padding:8px 20px;background:#0A1628;color:#fff;border:none;border-radius:8px;cursor:pointer;">Close</button>';
         return;
       }
       const board = data.leaderboard;
@@ -1010,22 +1024,22 @@ function openLeaderboard() {
         return `<tr style="background:${r.rank===1?'#FFF8E1':r.isYou?'#E3F2FD':'#fff'}">
           <td style="padding:8px 12px;font-weight:700;color:${r.rank===1?'#F9A825':'#546E7A'}">${r.rank}</td>
           <td style="padding:8px 12px;">${escHtml(r.display)}${tv}${you}</td>
-          <td style="padding:8px 12px;font-weight:700;color:#1565C0;">🏅 ${r.coins}</td>
+          <td style="padding:8px 12px;font-weight:700;color:var(--blue-mid);">🏅 ${r.coins}</td>
           <td style="padding:8px 12px;color:#2E7D32;">₹${r.inr}</td>
         </tr>`;
       }).join('');
       document.getElementById('lb-modal').querySelector('div').innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          <h3 style="margin:0;color:#0D47A1;font-size:16px;">🏆 Loyalty Bonus Leaderboard</h3>
+          <h3 style="margin:0;color:var(--blue);font-size:16px;">🏆 Loyalty Bonus Leaderboard</h3>
           <button onclick="document.getElementById('lb-modal').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#90A4AE;">✕</button>
         </div>
         <p style="font-size:12px;color:#90A4AE;margin:0 0 12px;">Top 10 members by earned coins · 1 coin = ₹5</p>
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <thead><tr style="background:#E3F2FD;">
-            <th style="padding:8px 12px;text-align:left;color:#0D47A1;">#</th>
-            <th style="padding:8px 12px;text-align:left;color:#0D47A1;">Member</th>
-            <th style="padding:8px 12px;text-align:left;color:#0D47A1;">Coins</th>
-            <th style="padding:8px 12px;text-align:left;color:#0D47A1;">Value</th>
+            <th style="padding:8px 12px;text-align:left;color:var(--blue);">#</th>
+            <th style="padding:8px 12px;text-align:left;color:var(--blue);">Member</th>
+            <th style="padding:8px 12px;text-align:left;color:var(--blue);">Coins</th>
+            <th style="padding:8px 12px;text-align:left;color:var(--blue);">Value</th>
           </tr></thead>
           <tbody>${rows}</tbody>
         </table>
@@ -1035,7 +1049,7 @@ function openLeaderboard() {
       if (!document.getElementById('lb-modal')) return;
       document.getElementById('lb-modal').querySelector('div').innerHTML =
         '<p style="color:#E53935;">Network error. Please try again.</p>' +
-        '<button onclick="document.getElementById(\"lb-modal\").remove()" style="margin-top:12px;padding:8px 20px;background:#1565C0;color:#fff;border:none;border-radius:8px;cursor:pointer;">Close</button>';
+        '<button onclick="document.getElementById(\"lb-modal\").remove()" style="margin-top:12px;padding:8px 20px;background:#0A1628;color:#fff;border:none;border-radius:8px;cursor:pointer;">Close</button>';
     });
 }
 
@@ -1057,26 +1071,26 @@ function openBuyCoins() {
   m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;';
   m.innerHTML = `<div style="background:#fff;border-radius:16px;padding:28px;max-width:400px;width:90%;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <h3 style="margin:0;color:#0D47A1;font-size:16px;">🏅 Buy Loyalty Coins</h3>
+      <h3 style="margin:0;color:var(--blue);font-size:16px;">🏅 Buy Loyalty Coins</h3>
       <button onclick="document.getElementById('buy-modal').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#90A4AE;">✕</button>
     </div>
     <p style="font-size:12px;color:#546E7A;margin:0 0 16px;">1 coin = ₹5 · Minimum purchase: 100 coins</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
       ${[[100,500],[200,1000],[500,2500]].map(([c,r])=>`
         <div onclick="selectPack(${c},${r},this)" style="border:2px solid #E3F2FD;border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all 0.15s;" class="coin-pack">
-          <div style="font-size:22px;font-weight:800;color:#1565C0;">${c}</div>
+          <div style="font-size:22px;font-weight:800;color:var(--blue-mid);">${c}</div>
           <div style="font-size:11px;color:#546E7A;">coins</div>
           <div style="font-size:14px;font-weight:700;color:#2E7D32;margin-top:4px;">₹${r}</div>
         </div>`).join('')}
       <div onclick="selectPack(1000,4500,this)" style="border:2px solid #FFE082;border-radius:10px;padding:14px;text-align:center;cursor:pointer;position:relative;" class="coin-pack">
         <div style="position:absolute;top:-8px;right:8px;background:#FFB300;color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:2px 7px;">BEST VALUE</div>
-        <div style="font-size:22px;font-weight:800;color:#1565C0;">1000</div>
+        <div style="font-size:22px;font-weight:800;color:var(--blue-mid);">1000</div>
         <div style="font-size:11px;color:#546E7A;">coins</div>
         <div style="font-size:14px;font-weight:700;color:#2E7D32;margin-top:4px;">₹4,500</div>
       </div>
     </div>
-    <div id="buy-selected" style="display:none;background:#E3F2FD;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#0D47A1;font-weight:600;"></div>
-    <button id="pay-btn" onclick="initiatePayment()" disabled style="width:100%;padding:13px;background:#1565C0;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:not-allowed;opacity:0.5;font-family:'DM Sans',sans-serif;">
+    <div id="buy-selected" style="display:none;background:#E3F2FD;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--blue);font-weight:600;"></div>
+    <button id="pay-btn" onclick="initiatePayment()" disabled style="width:100%;padding:13px;background:#0A1628;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:not-allowed;opacity:0.5;font-family:'DM Sans',sans-serif;">
       Pay & Get Coins
     </button>
     <p style="font-size:10px;color:#B0BEC5;margin:10px 0 0;text-align:center;">Secure payment via Razorpay · UPI · Debit/Credit cards accepted</p>

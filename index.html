@@ -6,29 +6,44 @@
 <title>GCCPROs — Member Login</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+
+  /* ── GCCPROs Website Theme Alignment ── */
+  :root {
+    --ink: #0A1628;
+    --gold: #C9973A;
+    --gold-light: #F0C87A;
+    --blue: #1A3A6B;
+    --blue-mid: #2356A4;
+    --blue-light: #EBF1FB;
+    --cream: #FAF7F2;
+    --white: #FFFFFF;
+    --muted: #6B7A99;
+    --border: rgba(26,58,107,0.1);
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: #EBF2FB; min-height: 100vh; display: flex; flex-direction: column; }
-  .top-bar { background: #1565C0; padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #0D47A1; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); min-height: 100vh; display: flex; flex-direction: column; }
+  .top-bar { background: rgba(10,22,40,0.97); padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(201,151,58,0.2); }
   .logo-img { height: 44px; display: none; }
-  .nav-tag { font-size: 11px; color: #BBDEFB; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; }
-  .hero { background: linear-gradient(135deg, #1565C0 0%, #0D47A1 60%, #1976D2 100%); padding: 48px 24px 64px; text-align: center; position: relative; overflow: hidden; }
+  .nav-tag { font-size: 11px; color: rgba(255,255,255,0.65); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; }
+  .hero { background: var(--ink); padding: 48px 24px 64px; text-align: center; position: relative; overflow: hidden; }
   .hero::before { content:''; position:absolute; top:-60px; right:-60px; width:240px; height:240px; border-radius:50%; background:rgba(255,255,255,0.05); }
   .hero::after  { content:''; position:absolute; bottom:-40px; left:-40px; width:180px; height:180px; border-radius:50%; background:rgba(255,255,255,0.04); }
-  .hero h1 { font-family: 'DM Serif Display', serif; font-size: 30px; color: #fff; margin-bottom: 10px; line-height: 1.25; position: relative; z-index: 1; }
-  .hero p { font-size: 14px; color: #BBDEFB; max-width: 380px; margin: 0 auto; line-height: 1.7; position: relative; z-index: 1; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: 30px; color: #fff; margin-bottom: 10px; line-height: 1.25; position: relative; z-index: 1; }
+  .hero p { font-size: 14px; color: rgba(255,255,255,0.65); max-width: 380px; margin: 0 auto; line-height: 1.7; position: relative; z-index: 1; }
   .card-wrap { display: flex; justify-content: center; padding: 0 16px 48px; margin-top: -32px; }
-  .card { background: #fff; border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 420px; box-shadow: 0 4px 24px rgba(21,101,192,0.12); border: 1px solid #E3F2FD; }
-  .card-title { font-size: 18px; font-weight: 500; color: #0D47A1; margin-bottom: 4px; }
+  .card { background: #fff; border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 420px; box-shadow: 0 4px 24px rgba(10,22,40,0.1); border: 1px solid var(--border); }
+  .card-title { font-size: 18px; font-weight: 500; color: var(--ink); margin-bottom: 4px; font-family: 'Playfair Display', serif; }
   .card-sub { font-size: 12px; color: #888; margin-bottom: 24px; line-height: 1.6; }
   label { display: block; font-size: 12px; font-weight: 500; color: #37474F; margin-bottom: 5px; }
   input[type=email], input[type=password] { width: 100%; border: 1.5px solid #BBDEFB; border-radius: 8px; padding: 12px 14px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: #1a2340; outline: none; transition: border 0.15s; margin-bottom: 16px; background: #FAFCFF; }
-  input[type=email]:focus, input[type=password]:focus { border-color: #1565C0; background: #fff; }
-  .btn { width: 100%; background: #1565C0; color: #fff; border: none; border-radius: 8px; padding: 14px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.15s; margin-top: 4px; letter-spacing: 0.3px; }
-  .btn:hover { background: #0D47A1; }
-  .btn:disabled { background: #90CAF9; cursor: not-allowed; }
+  input[type=email]:focus, input[type=password]:focus { border-color: var(--blue-mid); background: #fff; }
+  .btn { width: 100%; background: var(--ink); color: #fff; border: none; border-radius: 8px; padding: 14px; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.15s; margin-top: 4px; letter-spacing: 0.3px; }
+  .btn:hover { background: var(--blue); }
+  .btn:disabled { background: rgba(10,22,40,0.4); cursor: not-allowed; }
   .divider { text-align: center; font-size: 12px; color: #BDBDBD; margin: 20px 0; }
   .link-row { text-align: center; font-size: 13px; color: #888; }
-  .link-row a { color: #1565C0; text-decoration: none; font-weight: 500; }
+  .link-row a { color: var(--blue-mid); text-decoration: none; font-weight: 500; }
   .err { background: #FFEBEE; border: 1.5px solid #EF9A9A; border-radius: 8px; padding: 11px 14px; font-size: 13px; color: #B71C1C; margin-bottom: 16px; display: none; line-height: 1.5; }
   .loading { text-align: center; font-size: 13px; color: #1565C0; margin-top: 12px; display: none; }
   .sec-note { background: #E3F2FD; border-radius: 8px; padding: 11px 14px; margin-top: 20px; font-size: 12px; color: #0D47A1; line-height: 1.5; border-left: 3px solid #1565C0; }
