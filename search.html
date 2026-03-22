@@ -573,6 +573,12 @@ function getToken() {
   return (currentUser ? currentUser.email : null) || _cachedEmail || localStorage.getItem('gcc_token') || '';
 }
 
+// ── Multi-page fetch: fetches 3 pages at once, paginates client-side at 5 per page ──
+const CLIENT_PAGE_SIZE = 5;
+const PAGES_TO_FETCH   = 3;
+let _allFetchedResults = [];  // combined results from all fetched pages
+let _totalServerPages  = 1;   // total pages reported by backend
+
 async function doSearch(page){
   page=page||1;
   const q=document.getElementById('search-input').value.trim();
@@ -593,41 +599,93 @@ async function doSearch(page){
 
   const field2=document.getElementById('field-select-2').value;
   const q2=(document.getElementById('search-input-2').value||'').trim();
-  const url=SCRIPT_URL+'?token='+encodeURIComponent(token)+'&field='+field+'&q='+encodeURIComponent(q)+'&page='+page
-    +(field2&&q2?'&field2='+encodeURIComponent(field2)+'&q2='+encodeURIComponent(q2):'');
+  const f2Param = (field2&&q2?'&field2='+encodeURIComponent(field2)+'&q2='+encodeURIComponent(q2):'');
+
+  // Build URLs for 3 pages in parallel
+  const fetchUrls = [];
+  for(let p=1; p<=PAGES_TO_FETCH; p++){
+    fetchUrls.push(
+      SCRIPT_URL+'?token='+encodeURIComponent(token)+'&field='+field+'&q='+encodeURIComponent(q)+'&page='+p+f2Param
+    );
+  }
+
   try{
-    const res=await fetch(url); const data=await res.json();
-    if(data.error==='Unauthorized'){alert('Session expired. Please log in again.');auth.signOut();window.location.href='index.html';return;}
-    if(data.error){showState('No results',data.error);return;}
-    renderResults(data,page);
+    // Fetch all 3 pages in parallel
+    const responses = await Promise.all(fetchUrls.map(u => fetch(u).then(r=>r.json()).catch(()=>null)));
+
+    // Check first response for errors
+    const first = responses[0];
+    if(!first){showState('Search failed','Please check your connection and try again.');return;}
+    if(first.error==='Unauthorized'){alert('Session expired. Please log in again.');auth.signOut();window.location.href='index.html';return;}
+    if(first.error){showState('No results',first.error);return;}
+
+    // Combine all results from the 3 pages (de-duplicate by name)
+    const seen = new Set();
+    _allFetchedResults = [];
+    _totalServerPages = first.pages || 1;
+    for(const data of responses){
+      if(data && data.results && data.results.length > 0){
+        for(const r of data.results){
+          if(!seen.has(r.name)){
+            seen.add(r.name);
+            _allFetchedResults.push(r);
+          }
+        }
+      }
+    }
+
+    if(_allFetchedResults.length === 0){
+      showState('No results','Nothing matched "<strong>'+escHtml(lastQuery)+'</strong>" in the '+escHtml(FIELD_META[lastField].label)+' field. Try a different search term.');
+      return;
+    }
+
+    // Show first client-side page
+    showPage(1);
   }catch(e){showState('Search failed','Please check your connection and try again.');}
 }
 
-function renderResults(data,page){
+function showPage(page){
   // Check page view limit
   const pageData = checkPageLimit();
   if (pageData.count >= PAGE_LIMIT) { showPageLimitError(pageData); return; }
   incrementPage();
   updateSearchCounter();
 
+  const totalResults = _allFetchedResults.length;
+  const totalPages   = Math.ceil(totalResults / CLIENT_PAGE_SIZE);
+  const startIdx     = (page - 1) * CLIENT_PAGE_SIZE;
+  const endIdx       = Math.min(startIdx + CLIENT_PAGE_SIZE, totalResults);
+  const pageResults  = _allFetchedResults.slice(startIdx, endIdx);
+
+  // Store for back-to-results
+  lastResults = { results: pageResults, pages: totalPages, page: page, _clientPaged: true };
+
   const wrap=document.getElementById('results-wrap');
-  if(!data.results||data.results.length===0){
-    document.getElementById('results-wrap').innerHTML=`<div class="state-box"><h3>No results found</h3><p>Nothing matched "<strong>${escHtml(lastQuery)}</strong>" in the ${escHtml(FIELD_META[lastField].label)} field. Try a different search term.</p></div><div class="submit-nudge" onclick="openSubmitModal()"><div class="nudge-icon">+</div><div class="nudge-text"><strong>Add your GCC — didn't find it in the list?</strong><span>Submit details &amp; earn <strong>100 Loyalty Coins</strong> for every new GCC accepted. Your inputs could help over 2 million GCC professionals. 🏅</span></div><div class="nudge-arrow">›</div></div>`;
-    return;
-  }
-  lastResults=data;
-  const startNum=(page-1)*10+1;
+  const startNum = startIdx + 1;
   const fieldLabel=FIELD_META[lastField].label;
-  const rows=data.results.map((r,i)=>`<div class="result-row" onclick="showCompanyDetail('${escHtml(r.name)}')" oncontextmenu="return false"><span class="r-num">${startNum+i}</span><div class="r-body"><span class="r-name">${escHtml(r.name)}</span>${lastField!=='company'?`<span class="r-match">${escHtml(fieldLabel)}: ${escHtml(r.matchedValue)}</span>`:''}</div><span class="r-arrow">›</span></div>`).join('');
+  const rows=pageResults.map((r,i)=>`<div class="result-row" onclick="showCompanyDetail('${escHtml(r.name)}')" oncontextmenu="return false"><span class="r-num">${startNum+i}</span><div class="r-body"><span class="r-name">${escHtml(r.name)}</span>${lastField!=='company'?`<span class="r-match">${escHtml(fieldLabel)}: ${escHtml(r.matchedValue)}</span>`:''}</div><span class="r-arrow">›</span></div>`).join('');
+
   let pagination='';
-  if(data.pages>1){
+  if(totalPages>1){
     let btns='';
-    if(page>1) btns+=`<button class="pg-btn" onclick="doSearch(${page-1})">&#8249; Previous</button>`;
-    if(page<data.pages) btns+=`<button class="pg-btn" onclick="doSearch(${page+1})">Next &#8250;</button>`;
-    pagination=`<div class="pagination">${btns}</div><div class="pg-info">Click any company name to view its full profile</div>`;
+    if(page>1) btns+=`<button class="pg-btn" onclick="showPage(${page-1})">&#8249; Previous</button>`;
+    for(let p=1; p<=totalPages; p++){
+      btns+=`<button class="pg-btn${p===page?' active':''}" onclick="showPage(${p})">${p}</button>`;
+    }
+    if(page<totalPages) btns+=`<button class="pg-btn" onclick="showPage(${page+1})">Next &#8250;</button>`;
+    pagination=`<div class="pagination">${btns}</div><div class="pg-info">Page ${page} of ${totalPages} · ${totalResults} results · 5 per page</div>`;
   }
   const betaNote=`<div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);border-radius:10px;padding:10px 16px;margin-top:14px;font-size:12px;color:rgba(255,255,255,0.82);text-align:center;line-height:1.6;">⚠️ <strong>Beta POC</strong> — Data targets 95% accuracy. Use <em>Suggest a correction</em> on any profile to help us improve it.</div>`;
-  wrap.innerHTML=`<div class="result-list" oncontextmenu="return false">${rows}</div>${pagination}${betaNote}<div class="submit-nudge" onclick="openSubmitModal()"><div class="nudge-icon">+</div><div class="nudge-text"><strong>Add your GCC — didn't find it in the list?</strong><span>Submit details &amp; earn <strong>100 Loyalty Coins</strong> for every new GCC accepted. Your inputs could help over 2 million GCC professionals. 🏅</span></div><div class="nudge-arrow">›</div></div>`;
+  wrap.innerHTML=`<div class="result-meta"><span class="result-count">${totalResults} results for "${escHtml(lastQuery)}"</span></div><div class="result-list" oncontextmenu="return false">${rows}</div>${pagination}${betaNote}<div class="submit-nudge" onclick="openSubmitModal()"><div class="nudge-icon">+</div><div class="nudge-text"><strong>Add your GCC — didn't find it in the list?</strong><span>Submit details &amp; earn <strong>100 Loyalty Coins</strong> for every new GCC accepted. Your inputs could help over 2 million GCC professionals. 🏅</span></div><div class="nudge-arrow">›</div></div>`;
+}
+
+// Keep renderResults as a thin wrapper for backward compatibility (backToResults)
+function renderResults(data,page){
+  if(data._clientPaged && _allFetchedResults.length > 0){
+    showPage(data.page || 1);
+    return;
+  }
+  showPage(page || 1);
 }
 
 async function showCompanyDetail(name){
