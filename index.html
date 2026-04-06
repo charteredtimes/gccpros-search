@@ -53,11 +53,11 @@
 <body>
 <div class="top-bar">
   <div style="display:flex;align-items:center;gap:24px;width:100%;font-size:13px;">
-    <a href="https://www.gccpros.com/index.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Home</a>
-    <a href="https://www.gccpros.com/insights-events.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Insights & Events</a>
-    <a href="https://www.gccpros.com/industry-council.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Industry Council</a>
-    <a href="https://www.gccpros.com/database.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">GCC Database</a>
-    <a href="https://www.gccpros.com/opportunities.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">GCC Opportunities</a>
+    <a href="https://www.gccpros.com/index" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Home</a>
+    <a href="https://www.gccpros.com/insights-events" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Insights & Events</a>
+    <a href="https://www.gccpros.com/industry-council" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Industry Council</a>
+    <a href="https://www.gccpros.com/database" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">GCC Database</a>
+    <a href="https://www.gccpros.com/opportunities" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">GCC Opportunities</a>
   </div>
 </div>
 <div class="hero">
@@ -97,7 +97,7 @@
       </div>
     </div>
     <div class="divider">— or —</div>
-    <div style="margin-top:6px;"><a href="register.html" style="display:block;width:100%;background:#E3F2FD;color:#1565C0;border:2px solid #1565C0;border-radius:8px;padding:13px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;text-align:center;text-decoration:none;cursor:pointer;box-sizing:border-box;transition:background 0.15s;" onmouseover="this.style.background='#BBDEFB'" onmouseout="this.style.background='#E3F2FD'">🆕 New here? Apply for access</a></div>
+    <div style="margin-top:6px;"><a href="register" style="display:block;width:100%;background:#E3F2FD;color:#1565C0;border:2px solid #1565C0;border-radius:8px;padding:13px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;text-align:center;text-decoration:none;cursor:pointer;box-sizing:border-box;transition:background 0.15s;" onmouseover="this.style.background='#BBDEFB'" onmouseout="this.style.background='#E3F2FD'">🆕 New here? Apply for access</a></div>
     <div style="background:#FFF8E1;border:1.5px solid #FFE082;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:12px;color:#795548;line-height:1.6;">
   ⚠️ <strong>Beta Notice:</strong> This product is currently in POC phase and is expected to deliver <strong>95% accuracy</strong> on data. Some records may be incomplete or require verification.
 </div><a href="https://chat.whatsapp.com/IIOrxjXkx9IBSSVBlpYXwu" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;padding:12px 20px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;margin-bottom:14px;transition:background 0.15s;" onmouseover="this.style.background='#1DA851'" onmouseout="this.style.background='#25D366'">
@@ -110,7 +110,7 @@
   </div>
 </div>
 <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:16px 0;padding:12px 0;border-top:1px solid rgba(255,255,255,0.1);border-bottom:1px solid rgba(255,255,255,0.1);">
-  <a href="https://www.gccpros.com/community-insider.html" target="_blank" style="display:inline-flex;align-items:center;gap:6px;color:#25D366;text-decoration:none;font-size:12px;font-weight:600;">GCC Insider Community</a>
+  <a href="https://www.gccpros.com/community-insider" target="_blank" style="display:inline-flex;align-items:center;gap:6px;color:#25D366;text-decoration:none;font-size:12px;font-weight:600;">GCC Insider Community</a>
   <a href="https://whatsapp.com/channel/0029Vb7RNvY4IBhDd4TbUU01" target="_blank" style="display:inline-flex;align-items:center;gap:6px;color:#25D366;text-decoration:none;font-size:12px;font-weight:600;">WhatsApp Channel</a>
 </div>
 <footer style="font-size:11px;color:#90A4AE;padding:24px;text-align:center;">GCCPROs · <a href="https://www.gccpros.com" target="_blank" style="color:#90A4AE;">www.gccpros.com</a> · Founded by Shammi Prabhakar Singh · WhatsApp: +91-85069-76700</footer>
@@ -150,7 +150,7 @@ async function sendResetEmail() {
   btn.textContent = 'Sending...';
   try {
     const actionCodeSettings = {
-      url: 'https://portal.gccpros.com/reset.html',
+      url: 'https://portal.gccpros.com/reset',
       handleCodeInApp: false
     };
     await auth.sendPasswordResetEmail(email, actionCodeSettings);
@@ -176,7 +176,7 @@ async function sendResetEmail() {
   }
 }
 auth.onAuthStateChanged(u => {
-  if (u) { localStorage.setItem('gcc_token', u.email); window.location.href = 'search.html'; }
+  if (u) { localStorage.setItem('gcc_token', u.email); window.location.href = 'search'; }
 });
 function showErr(m) { const e = document.getElementById('err'); e.textContent = m; e.style.display = 'block'; }
 async function doLogin() {

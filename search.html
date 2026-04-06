@@ -142,11 +142,11 @@
 <body>
 <div class="nav">
   <div style="display:flex;align-items:center;gap:24px;font-size:13px;flex:1;">
-    <a href="https://www.gccpros.com/index.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Home</a>
-    <a href="https://www.gccpros.com/insights-events.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Insights & Events</a>
-    <a href="https://www.gccpros.com/industry-council.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Industry Council</a>
-    <a href="https://www.gccpros.com/database.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">GCC Database</a>
-    <a href="https://www.gccpros.com/opportunities.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">GCC Opportunities</a>
+    <a href="https://www.gccpros.com/index" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Home</a>
+    <a href="https://www.gccpros.com/insights-events" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Insights & Events</a>
+    <a href="https://www.gccpros.com/industry-council" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">Industry Council</a>
+    <a href="https://www.gccpros.com/database" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">GCC Database</a>
+    <a href="https://www.gccpros.com/opportunities" style="color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;">GCC Opportunities</a>
   </div>
   <div class="nav-right">
     <button class="pwd-btn" onclick="openSubmitModal()">+ Submit a GCC</button>
@@ -297,10 +297,10 @@
   </div>
 </div>
 <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:16px 0;padding:12px 0;border-top:1px solid rgba(255,255,255,0.1);border-bottom:1px solid rgba(255,255,255,0.1);">
-  <a href="https://www.gccpros.com/community-insider.html" target="_blank" style="display:inline-flex;align-items:center;gap:6px;color:#25D366;text-decoration:none;font-size:12px;font-weight:600;">GCC Insider Community</a>
+  <a href="https://www.gccpros.com/community-insider" target="_blank" style="display:inline-flex;align-items:center;gap:6px;color:#25D366;text-decoration:none;font-size:12px;font-weight:600;">GCC Insider Community</a>
   <a href="https://whatsapp.com/channel/0029Vb7RNvY4IBhDd4TbUU01" target="_blank" style="display:inline-flex;align-items:center;gap:6px;color:#25D366;text-decoration:none;font-size:12px;font-weight:600;">WhatsApp Channel</a>
 </div>
-<footer style="font-size:11px;color:#90A4AE;padding:12px 24px 24px;text-align:center;">GCCPROs · <a href="https://www.gccpros.com" target="_blank" style="color:rgba(255,255,255,0.6);">www.gccpros.com</a> · For verified members only · WhatsApp: +91-85069-76700 · <a href="faq-loyalty.html" target="_blank" style="color:rgba(255,255,255,0.6);">Loyalty FAQ</a></footer>
+<footer style="font-size:11px;color:#90A4AE;padding:12px 24px 24px;text-align:center;">GCCPROs · <a href="https://www.gccpros.com" target="_blank" style="color:rgba(255,255,255,0.6);">www.gccpros.com</a> · For verified members only · WhatsApp: +91-85069-76700 · <a href="faq-loyalty" target="_blank" style="color:rgba(255,255,255,0.6);">Loyalty FAQ</a></footer>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script>
@@ -358,7 +358,7 @@ auth.onAuthStateChanged(function(u) {
   } else {
     // Firebase says no session — redirect only if cache is also empty
     if (!_cachedEmail) {
-      window.location.href = 'index.html';
+      window.location.href = 'index';
     }
     // If cache exists, keep page usable while Firebase retries
   }
@@ -368,7 +368,7 @@ document.getElementById('user-pill').addEventListener('click',()=>{
     const t = getToken();
     if(t && t.length > 20) fetch(SCRIPT_URL + '?action=revokeSession&token=' + encodeURIComponent(t));
 
-    auth.signOut().then(()=>window.location.href='index.html');
+    auth.signOut().then(()=>window.location.href='index');
   }
 });
 
@@ -598,7 +598,7 @@ async function doSearch(page){
   if(!q){alert('Please type a search term first.');return;}
 
   const token = getToken();
-  if(!token){ alert('Please log in to search.'); window.location.href='index.html'; return; }
+  if(!token){ alert('Please log in to search.'); window.location.href='index'; return; }
 
   const rate = checkRateLimit();
   if (rate.count >= DAILY_LIMIT) { showRateLimitError(rate); return; }
@@ -642,7 +642,7 @@ async function _fetchBatch(){
     if(_lastServerPage === 0){
       const first = responses[0];
       if(!first){showState('Search failed','Please check your connection and try again.');return false;}
-      if(first.error==='Unauthorized'){alert('Session expired. Please log in again.');auth.signOut();window.location.href='index.html';return false;}
+      if(first.error==='Unauthorized'){alert('Session expired. Please log in again.');auth.signOut();window.location.href='index';return false;}
       if(first.error){showState('No results',first.error);return false;}
       _totalServerPages = first.pages || 1;
     }
