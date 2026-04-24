@@ -136,6 +136,23 @@ window.addEventListener('load', function() {
         document.getElementById('loading-state').style.display = 'none';
         document.getElementById('invalid-state').style.display = 'block';
       });
+  } else if (mode === 'signIn' && oobCode) {
+    // Database Pro email-link (passwordless) sign-in.
+    // We don't complete the sign-in here — portal.gccpros.com isn't
+    // the page the user came from, and we can't read the cross-
+    // subdomain localStorage that holds their email. Instead we
+    // forward the entire query string to the continueUrl (which is
+    // a page on www.gccpros.com that knows how to call Firebase's
+    // isSignInWithEmailLink / signInWithEmailLink pair). The user's
+    // email was cached in localStorage on that subdomain when they
+    // requested the link, so the target page can finish sign-in
+    // transparently and drop them straight into the portal.
+    var continueUrl = params.get('continueUrl') || 'https://www.gccpros.com/database-pro.html';
+    var sep = continueUrl.indexOf('?') >= 0 ? '&' : '?';
+    var fwd = window.location.search.substring(1);   // drop leading '?'
+    document.getElementById('loading-state').innerHTML =
+      '<div class="spinner"></div><p>Signing you in to Database Pro...</p>';
+    setTimeout(function(){ window.location.href = continueUrl + sep + fwd; }, 250);
   } else if (mode === 'verifyEmail') {
     // Handle email verification if needed
     window.location.href = 'index';
